@@ -23,9 +23,7 @@ export default function Navbar() {
                         alt="Logo da Universidade Federal de Itajubá"
                         className="h-10 w-10"
                     />
-                    <Link href="/" className="text-2xl font-bold tracking-tight text-white hover:text-gray-200 transition">
-                        Laboratórios UNIFEI
-                    </Link>
+                    <h1 className="text-2xl font-bold tracking-tight">Lab Management System</h1>
                 </div>
                 <div className="flex space-x-16">
                     {/* Usuários */}

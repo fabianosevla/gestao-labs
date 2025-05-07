@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMicroHardwares, useLaboratories } from "../../../../lib/storage";
+import { useMicroHardwares } from "../../../../lib/storage";
 
 export default function MicroHardware() {
     const router = useRouter();
     const [microHardwares, setMicroHardwares] = useMicroHardwares();
-    const [laboratories] = useLaboratories();
     const [searchName, setSearchName] = useState("");
     const [searchStatus, setSearchStatus] = useState("");
 
@@ -19,26 +18,25 @@ export default function MicroHardware() {
         router.push(`/labs/hardware/micro/edit/${id}`);
     };
 
-    const handleDelete = (id) => {
-        const updatedMicroHardwares = microHardwares.filter((hw) => hw.id !== id);
-        setMicroHardwares(updatedMicroHardwares);
+    const handleDelete = async (id) => {
+        const updatedMicroHardwares = microHardwares.filter((h) => h.id !== id);
+        await setMicroHardwares(updatedMicroHardwares);
     };
 
-    const filteredMicroHardwares = microHardwares.filter((hw) => {
-        const matchesName = hw.name.toLowerCase().includes(searchName.toLowerCase());
-        const matchesStatus = searchStatus ? hw.status.toLowerCase() === searchStatus.toLowerCase() : true;
+    const filteredMicroHardwares = microHardwares.filter((hardware) => {
+        const matchesName = hardware.name
+            .toLowerCase()
+            .includes(searchName.toLowerCase());
+        const matchesStatus = searchStatus
+            ? hardware.status.toLowerCase() === searchStatus.toLowerCase()
+            : true;
         return matchesName && matchesStatus;
     });
 
-    const getLaboratoryName = (labId) => {
-        const lab = laboratories.find((l) => l.id === labId);
-        return lab ? lab.name : "Nenhum";
-    };
-
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Hardware Micro</h1>
-            <p className="text-gray-700 mb-6">Aqui você pode gerenciar os componentes de hardware micro.</p>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Micro Hardware</h1>
+            <p className="text-gray-700 mb-6">Gerencie os hardwares micro do laboratório.</p>
 
             <div className="mb-6 flex gap-4">
                 <div className="flex-1">
@@ -83,30 +81,28 @@ export default function MicroHardware() {
                         <tr className="bg-gray-100">
                             <th className="border p-3 text-gray-900 font-semibold text-left">ID</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Descrição</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Tipo</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Fabricante</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Nº Serial</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Data de Aquisição</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Laboratório</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Usuário</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredMicroHardwares.map((hw) => (
-                            <tr key={hw.id} className="hover:bg-gray-50">
-                                <td className="border p-3 text-gray-700">{hw.id}</td>
-                                <td className="border p-3 text-gray-700">{hw.name}</td>
-                                <td className="border p-3 text-gray-700">{hw.description}</td>
-                                <td className="border p-3 text-gray-700">{hw.manufacturer}</td>
-                                <td className="border p-3 text-gray-700">{hw.acquisitionDate}</td>
-                                <td className="border p-3 text-gray-700">{hw.status}</td>
-                                <td className="border p-3 text-gray-700">{getLaboratoryName(hw.laboratoryId)}</td>
-                                <td className="border p-3 text-gray-700">{hw.user || "Nenhum"}</td>
+                        {filteredMicroHardwares.map((hardware) => (
+                            <tr key={hardware.id} className="hover:bg-gray-50">
+                                <td className="border p-3 text-gray-700">{hardware.id}</td>
+                                <td className="border p-3 text-gray-700">{hardware.name}</td>
+                                <td className="border p-3 text-gray-700">{hardware.type}</td>
+                                <td className="border p-3 text-gray-700">{hardware.manufacturer}</td>
+                                <td className="border p-3 text-gray-700">{hardware.serialNumber}</td>
+                                <td className="border p-3 text-gray-700">{hardware.acquisitionDate}</td>
+                                <td className="border p-3 text-gray-700">{hardware.status}</td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleEdit(hw.id)}
+                                        onClick={() => handleEdit(hardware.id)}
                                         className="text-blue-600 hover:text-blue-800"
                                         title="Editar"
                                     >
@@ -115,7 +111,7 @@ export default function MicroHardware() {
                                 </td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleDelete(hw.id)}
+                                        onClick={() => handleDelete(hardware.id)}
                                         className="text-red-600 hover:text-red-800"
                                         title="Excluir"
                                     >

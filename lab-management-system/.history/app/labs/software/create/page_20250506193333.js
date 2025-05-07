@@ -2,44 +2,38 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMicroHardwares, useLaboratories, useAdminUsers, useVisitorUsers } from "../../../../../lib/storage";
+import { useSoftwares } from "../../../../lib/storage";
 
-export default function CreateMicroHardware() {
+export default function CreateSoftware() {
     const router = useRouter();
-    const [microHardwares, setMicroHardwares] = useMicroHardwares();
-    const [laboratories] = useLaboratories();
-    const [adminUsers] = useAdminUsers();
-    const [visitorUsers] = useVisitorUsers();
+    const [softwares, setSoftwares] = useSoftwares();
     const [formData, setFormData] = useState({
         name: "",
-        description: "",
+        version: "",
         manufacturer: "",
+        license: "ativa",
         acquisitionDate: "",
         status: "ativo",
-        laboratoryId: "",
-        user: "",
     });
-
-    const allUsers = [...adminUsers, ...visitorUsers];
 
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const newMicroHardware = {
-            id: microHardwares.length + 1,
+        const newSoftware = {
+            id: softwares.length + 1,
             ...formData,
         };
-        setMicroHardwares([...microHardwares, newMicroHardware]);
-        router.push("/labs/hardware/micro");
+        await setSoftwares([...softwares, newSoftware]);
+        router.push("/labs/software");
     };
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Hardware Micro</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Software</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -51,21 +45,21 @@ export default function CreateMicroHardware() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o nome do hardware micro"
+                        placeholder="Digite o nome do software"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
-                        Descrição
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="version">
+                        Versão
                     </label>
                     <input
                         type="text"
-                        id="description"
-                        value={formData.description}
+                        id="version"
+                        value={formData.version}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite a descrição"
+                        placeholder="Ex.: 1.0.0"
                         required
                     />
                 </div>
@@ -82,6 +76,21 @@ export default function CreateMicroHardware() {
                         placeholder="Digite o fabricante"
                         required
                     />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="license">
+                        Licença
+                    </label>
+                    <select
+                        id="license"
+                        value={formData.license}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                    >
+                        <option value="ativa">Ativa</option>
+                        <option value="expirada">Expirada</option>
+                    </select>
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="acquisitionDate">
@@ -109,43 +118,6 @@ export default function CreateMicroHardware() {
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="laboratoryId">
-                        Laboratório
-                    </label>
-                    <select
-                        id="laboratoryId"
-                        value={formData.laboratoryId}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        required
-                    >
-                        <option value="">Selecione um laboratório</option>
-                        {laboratories.map((lab) => (
-                            <option key={lab.id} value={lab.id}>
-                                {lab.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="user">
-                        Usuário
-                    </label>
-                    <select
-                        id="user"
-                        value={formData.user}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    >
-                        <option value="">Nenhum</option>
-                        {allUsers.map((user) => (
-                            <option key={user.id} value={user.name}>
-                                {user.name}
-                            </option>
-                        ))}
                     </select>
                 </div>
                 <button

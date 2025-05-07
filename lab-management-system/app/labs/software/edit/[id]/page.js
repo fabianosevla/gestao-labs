@@ -2,18 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useSoftwares } from "../../../../../lib/storage";
+import { useSoftwares, useLaboratories, useAdminUsers, useVisitorUsers } from "../../../../../lib/storage";
 
 export default function EditSoftware() {
     const router = useRouter();
     const { id } = useParams();
     const [softwares, setSoftwares] = useSoftwares();
+    const [laboratories] = useLaboratories();
+    const [adminUsers] = useAdminUsers();
+    const [visitorUsers] = useVisitorUsers();
     const [formData, setFormData] = useState(null);
 
+    const allUsers = [...adminUsers, ...visitorUsers];
+
     useEffect(() => {
-        const software = softwares.find((s) => s.id === parseInt(id));
-        if (software) {
-            setFormData({ ...software });
+        const sw = softwares.find((s) => s.id === parseInt(id));
+        if (sw) {
+            setFormData({ ...sw });
         } else {
             router.push("/labs/software");
         }
@@ -63,47 +68,32 @@ export default function EditSoftware() {
                         value={formData.version}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: 1.0.0"
+                        placeholder="Digite a versão"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="manufacturer">
-                        Fabricante
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="developer">
+                        Desenvolvedor
                     </label>
                     <input
                         type="text"
-                        id="manufacturer"
-                        value={formData.manufacturer}
+                        id="developer"
+                        value={formData.developer}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o fabricante"
+                        placeholder="Digite o desenvolvedor"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="license">
-                        Licença
-                    </label>
-                    <select
-                        id="license"
-                        value={formData.license}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        required
-                    >
-                        <option value="ativa">Ativa</option>
-                        <option value="expirada">Expirada</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="acquisitionDate">
-                        Data de Aquisição
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="installationDate">
+                        Data de Instalação
                     </label>
                     <input
                         type="date"
-                        id="acquisitionDate"
-                        value={formData.acquisitionDate}
+                        id="installationDate"
+                        value={formData.installationDate}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         required
@@ -122,6 +112,43 @@ export default function EditSoftware() {
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="laboratoryId">
+                        Laboratório
+                    </label>
+                    <select
+                        id="laboratoryId"
+                        value={formData.laboratoryId}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                    >
+                        <option value="">Selecione um laboratório</option>
+                        {laboratories.map((lab) => (
+                            <option key={lab.id} value={lab.id}>
+                                {lab.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="user">
+                        Usuário
+                    </label>
+                    <select
+                        id="user"
+                        value={formData.user}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    >
+                        <option value="">Nenhum</option>
+                        {allUsers.map((user) => (
+                            <option key={user.id} value={user.name}>
+                                {user.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <button

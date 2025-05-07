@@ -2,18 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMicroHardwares } from "../../../../../lib/storage";
+import { useAdminUsers } from "../../../../../lib/storage";
 
-export default function CreateMicroHardware() {
+export default function CreateAdmin() {
     const router = useRouter();
-    const [microHardwares, setMicroHardwares] = useMicroHardwares();
+    const [adminUsers, setAdminUsers] = useAdminUsers();
     const [formData, setFormData] = useState({
         name: "",
-        type: "",
-        manufacturer: "",
-        serialNumber: "",
-        acquisitionDate: "",
-        status: "ativo",
+        course: "",
+        cpf: "",
+        registrationNumber: "",
+        type: "aluno",
     });
 
     const handleChange = (e) => {
@@ -21,19 +20,19 @@ export default function CreateMicroHardware() {
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const newHardware = {
-            id: microHardwares.length + 1,
+        const newAdmin = {
+            id: adminUsers.length + 1,
             ...formData,
         };
-        await setMicroHardwares([...microHardwares, newHardware]);
-        router.push("/labs/hardware/micro");
+        setAdminUsers([...adminUsers, newAdmin]);
+        router.push("/labs/users/admin");
     };
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Micro Hardware</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Administrador</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -50,73 +49,59 @@ export default function CreateMicroHardware() {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-                        Tipo
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="course">
+                        Curso
                     </label>
                     <input
                         type="text"
+                        id="course"
+                        value={formData.course}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        placeholder="Digite o curso"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="cpf">
+                        CPF
+                    </label>
+                    <input
+                        type="text"
+                        id="cpf"
+                        value={formData.cpf}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        placeholder="Digite o CPF (ex.: 123.456.789-00)"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="registrationNumber">
+                        Número de Matrícula
+                    </label>
+                    <input
+                        type="text"
+                        id="registrationNumber"
+                        value={formData.registrationNumber}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        placeholder="Digite o número de matrícula"
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
+                        Tipo
+                    </label>
+                    <select
                         id="type"
                         value={formData.type}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Processador"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="manufacturer">
-                        Fabricante
-                    </label>
-                    <input
-                        type="text"
-                        id="manufacturer"
-                        value={formData.manufacturer}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Intel"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="serialNumber">
-                        Número Serial
-                    </label>
-                    <input
-                        type="text"
-                        id="serialNumber"
-                        value={formData.serialNumber}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: ABC123"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="acquisitionDate">
-                        Data de Aquisição
-                    </label>
-                    <input
-                        type="date"
-                        id="acquisitionDate"
-                        value={formData.acquisitionDate}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="status">
-                        Status
-                    </label>
-                    <select
-                        id="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         required
                     >
-                        <option value="ativo">Ativo</option>
-                        <option value="inativo">Inativo</option>
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                        <option value="visitante_nao_matriculado">Visitante Não Matriculado</option>
                     </select>
                 </div>
                 <button

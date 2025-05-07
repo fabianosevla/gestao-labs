@@ -76,7 +76,7 @@ export const useSoftwares = () => {
     return [softwares, updateSoftwares];
 };
 
-// Hook para Admin/Users
+// Hook para AdminUsers
 export const useAdminUsers = () => {
     const [adminUsers, setAdminUsers] = useState([]);
 
@@ -95,7 +95,7 @@ export const useAdminUsers = () => {
     return [adminUsers, updateAdminUsers];
 };
 
-// Hook para Visitor/Users
+// Hook para VisitorUsers
 export const useVisitorUsers = () => {
     const [visitorUsers, setVisitorUsers] = useState([]);
 

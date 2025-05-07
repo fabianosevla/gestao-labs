@@ -2,17 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMicroHardwares } from "../../../../../lib/storage";
+import { useAdminUsers } from "../../../../../lib/storage";
 
-export default function CreateMicroHardware() {
+export default function CreateAdminUser() {
     const router = useRouter();
-    const [microHardwares, setMicroHardwares] = useMicroHardwares();
+    const [adminUsers, setAdminUsers] = useAdminUsers();
     const [formData, setFormData] = useState({
         name: "",
-        type: "",
-        manufacturer: "",
-        serialNumber: "",
-        acquisitionDate: "",
+        email: "",
+        password: "",
+        registerDate: "",
         status: "ativo",
     });
 
@@ -23,17 +22,17 @@ export default function CreateMicroHardware() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const newHardware = {
-            id: microHardwares.length + 1,
+        const newUser = {
+            id: adminUsers.length + 1,
             ...formData,
         };
-        await setMicroHardwares([...microHardwares, newHardware]);
-        router.push("/labs/hardware/micro");
+        await setAdminUsers([...adminUsers, newUser]);
+        router.push("/labs/users/admin");
     };
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Micro Hardware</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Usuário Administrador</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -50,55 +49,41 @@ export default function CreateMicroHardware() {
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-                        Tipo
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                        Email
                     </label>
                     <input
-                        type="text"
-                        id="type"
-                        value={formData.type}
+                        type="email"
+                        id="email"
+                        value={formData.email}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Processador"
+                        placeholder="Digite o email"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="manufacturer">
-                        Fabricante
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                        Senha
                     </label>
                     <input
-                        type="text"
-                        id="manufacturer"
-                        value={formData.manufacturer}
+                        type="password"
+                        id="password"
+                        value={formData.password}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Intel"
+                        placeholder="Digite a senha"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="serialNumber">
-                        Número Serial
-                    </label>
-                    <input
-                        type="text"
-                        id="serialNumber"
-                        value={formData.serialNumber}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: ABC123"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="acquisitionDate">
-                        Data de Aquisição
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="registerDate">
+                        Data de Registro
                     </label>
                     <input
                         type="date"
-                        id="acquisitionDate"
-                        value={formData.acquisitionDate}
+                        id="registerDate"
+                        value={formData.registerDate}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         required

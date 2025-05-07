@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMacroHardwares } from "../../../lib/storage";
+import { useMacroHardwares, useLaboratories } from "../../../../lib/storage";
 
-export default function Macro() {
+export default function MacroHardware() {
     const router = useRouter();
     const [macroHardwares, setMacroHardwares] = useMacroHardwares();
+    const [laboratories] = useLaboratories();
     const [searchName, setSearchName] = useState("");
     const [searchStatus, setSearchStatus] = useState("");
 
@@ -19,24 +20,25 @@ export default function Macro() {
     };
 
     const handleDelete = (id) => {
-        const updatedHardwares = macroHardwares.filter((h) => h.id !== id);
-        setMacroHardwares(updatedHardwares);
+        const updatedMacroHardwares = macroHardwares.filter((hw) => hw.id !== id);
+        setMacroHardwares(updatedMacroHardwares);
     };
 
-    const filteredHardwares = macroHardwares.filter((hardware) => {
-        const matchesName = hardware.name
-            .toLowerCase()
-            .includes(searchName.toLowerCase());
-        const matchesStatus = searchStatus
-            ? hardware.status.toLowerCase() === searchStatus.toLowerCase()
-            : true;
+    const filteredMacroHardwares = macroHardwares.filter((hw) => {
+        const matchesName = hw.name.toLowerCase().includes(searchName.toLowerCase());
+        const matchesStatus = searchStatus ? hw.status.toLowerCase() === searchStatus.toLowerCase() : true;
         return matchesName && matchesStatus;
     });
 
+    const getLaboratoryName = (labId) => {
+        const lab = laboratories.find((l) => l.id === labId);
+        return lab ? lab.name : "Nenhum";
+    };
+
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Laboratório Macro</h1>
-            <p className="text-gray-700 mb-6">Aqui você pode gerenciar os recursos do laboratório Macro.</p>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Hardware Macro</h1>
+            <p className="text-gray-700 mb-6">Aqui você pode gerenciar os componentes de hardware macro.</p>
 
             <div className="mb-6 flex gap-4">
                 <div className="flex-1">
@@ -81,34 +83,30 @@ export default function Macro() {
                         <tr className="bg-gray-100">
                             <th className="border p-3 text-gray-900 font-semibold text-left">ID</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Marca</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Modelo</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Número de Série</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Processador</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">RAM</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Armazenamento</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Descrição</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Fabricante</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Data de Aquisição</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Laboratório</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Usuário</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredHardwares.map((hardware) => (
-                            <tr key={hardware.id} className="hover:bg-gray-50">
-                                <td className="border p-3 text-gray-700">{hardware.id}</td>
-                                <td className="border p-3 text-gray-700">{hardware.name}</td>
-                                <td className="border p-3 text-gray-700">{hardware.brand}</td>
-                                <td className="border p-3 text-gray-700">{hardware.model}</td>
-                                <td className="border p-3 text-gray-700">{hardware.serialNumber}</td>
-                                <td className="border p-3 text-gray-700">{hardware.processor}</td>
-                                <td className="border p-3 text-gray-700">{hardware.ram}</td>
-                                <td className="border p-3 text-gray-700">{hardware.storage}</td>
-                                <td className="border p-3 text-gray-700">{hardware.acquisitionDate}</td>
-                                <td className="border p-3 text-gray-700">{hardware.status}</td>
+                        {filteredMacroHardwares.map((hw) => (
+                            <tr key={hw.id} className="hover:bg-gray-50">
+                                <td className="border p-3 text-gray-700">{hw.id}</td>
+                                <td className="border p-3 text-gray-700">{hw.name}</td>
+                                <td className="border p-3 text-gray-700">{hw.description}</td>
+                                <td className="border p-3 text-gray-700">{hw.manufacturer}</td>
+                                <td className="border p-3 text-gray-700">{hw.acquisitionDate}</td>
+                                <td className="border p-3 text-gray-700">{hw.status}</td>
+                                <td className="border p-3 text-gray-700">{getLaboratoryName(hw.laboratoryId)}</td>
+                                <td className="border p-3 text-gray-700">{hw.user || "Nenhum"}</td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleEdit(hardware.id)}
+                                        onClick={() => handleEdit(hw.id)}
                                         className="text-blue-600 hover:text-blue-800"
                                         title="Editar"
                                     >
@@ -117,7 +115,7 @@ export default function Macro() {
                                 </td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleDelete(hardware.id)}
+                                        onClick={() => handleDelete(hw.id)}
                                         className="text-red-600 hover:text-red-800"
                                         title="Excluir"
                                     >

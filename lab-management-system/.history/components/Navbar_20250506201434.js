@@ -17,16 +17,7 @@ export default function Navbar() {
     return (
         <nav className="bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-lg fixed top-0 left-0 w-full z-50">
             <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <div className="flex items-center space-x-4">
-                    <img
-                        src="/images/unifei.jpg"
-                        alt="Logo da Universidade Federal de Itajubá"
-                        className="h-10 w-10"
-                    />
-                    <Link href="/" className="text-2xl font-bold tracking-tight text-white hover:text-gray-200 transition">
-                        Laboratórios UNIFEI
-                    </Link>
-                </div>
+                <h1 className="text-2xl font-bold tracking-tight">Lab Management System</h1>
                 <div className="flex space-x-16">
                     {/* Usuários */}
                     <div className="relative group">
@@ -34,8 +25,8 @@ export default function Navbar() {
                             Usuários
                         </button>
                         <div className="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform -translate-y-3 transition-all duration-300 ease-in-out z-10">
-                            <Link href="/labs/users/visitor" className="block px-4 py-2 hover:bg-blue-100 rounded-t-xl transition duration-200">Visitantes</Link>
-                            <Link href="/labs/users/admin" className="block px-4 py-2 hover:bg-blue-100 rounded-b-xl transition duration-200">Admin</Link>
+                            <Link href="/users/visitors" className="block px-4 py-2 hover:bg-blue-100 rounded-t-xl transition duration-200">Visitantes</Link>
+                            <Link href="/users/admins" className="block px-4 py-2 hover:bg-blue-100 rounded-b-xl transition duration-200">Admin</Link>
                         </div>
                     </div>
 
@@ -45,7 +36,6 @@ export default function Navbar() {
                             Laboratórios
                         </button>
                         <div className="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform -translate-y-3 transition-all duration-300 ease-in-out z-20">
-                            <Link href="/labs/laboratories" className="block px-4 py-2 hover:bg-blue-100 rounded-t-xl transition duration-200">Laboratórios</Link>
                             <div className="relative group/sub">
                                 <button className="block px-4 py-2 hover:bg-blue-100 w-full text-left transition duration-200">
                                     Hardware

@@ -2,18 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useMicroHardwares } from "../../../../../lib/storage";
+import { useMicroHardwares, useLaboratories, useAdminUsers, useVisitorUsers } from "../../../../../../lib/storage";
 
-export default function EditMicro() {
+export default function EditMicroHardware() {
     const router = useRouter();
     const { id } = useParams();
     const [microHardwares, setMicroHardwares] = useMicroHardwares();
+    const [laboratories] = useLaboratories();
+    const [adminUsers] = useAdminUsers();
+    const [visitorUsers] = useVisitorUsers();
     const [formData, setFormData] = useState(null);
 
+    const allUsers = [...adminUsers, ...visitorUsers];
+
     useEffect(() => {
-        const hardware = microHardwares.find((h) => h.id === parseInt(id));
-        if (hardware) {
-            setFormData({ ...hardware });
+        const hw = microHardwares.find((h) => h.id === parseInt(id));
+        if (hw) {
+            setFormData({ ...hw });
         } else {
             router.push("/labs/hardware/micro");
         }
@@ -26,10 +31,10 @@ export default function EditMicro() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const updatedHardwares = microHardwares.map((h) =>
-            h.id === parseInt(id) ? { ...formData, quantity: parseInt(formData.quantity) || 0 } : h
+        const updatedMicroHardwares = microHardwares.map((h) =>
+            h.id === parseInt(id) ? { ...formData } : h
         );
-        setMicroHardwares(updatedHardwares);
+        setMicroHardwares(updatedMicroHardwares);
         router.push("/labs/hardware/micro");
     };
 
@@ -49,52 +54,21 @@ export default function EditMicro() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o nome do componente"
+                        placeholder="Digite o nome do hardware micro"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-                        Tipo
-                    </label>
-                    <select
-                        id="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        required
-                    >
-                        <option value="resistor">Resistor</option>
-                        <option value="capacitor">Capacitor</option>
-                        <option value="transistor">Transistor</option>
-                        <option value="diodo">Diodo</option>
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="value">
-                        Valor/Especificação
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+                        Descrição
                     </label>
                     <input
                         type="text"
-                        id="value"
-                        value={formData.value}
+                        id="description"
+                        value={formData.description}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: 10kΩ, 100µF"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="quantity">
-                        Quantidade em Estoque
-                    </label>
-                    <input
-                        type="number"
-                        id="quantity"
-                        value={formData.quantity}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite a quantidade"
+                        placeholder="Digite a descrição"
                         required
                     />
                 </div>
@@ -138,6 +112,43 @@ export default function EditMicro() {
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="laboratoryId">
+                        Laboratório
+                    </label>
+                    <select
+                        id="laboratoryId"
+                        value={formData.laboratoryId}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                    >
+                        <option value="">Selecione um laboratório</option>
+                        {laboratories.map((lab) => (
+                            <option key={lab.id} value={lab.id}>
+                                {lab.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="user">
+                        Usuário
+                    </label>
+                    <select
+                        id="user"
+                        value={formData.user}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    >
+                        <option value="">Nenhum</option>
+                        {allUsers.map((user) => (
+                            <option key={user.id} value={user.name}>
+                                {user.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <button

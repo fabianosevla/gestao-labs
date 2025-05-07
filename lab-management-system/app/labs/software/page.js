@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSoftwares } from "../../../lib/storage";
+import { useSoftwares, useLaboratories } from "../../../lib/storage";
 
 export default function Software() {
     const router = useRouter();
     const [softwares, setSoftwares] = useSoftwares();
+    const [laboratories] = useLaboratories();
     const [searchName, setSearchName] = useState("");
     const [searchStatus, setSearchStatus] = useState("");
 
@@ -19,24 +20,25 @@ export default function Software() {
     };
 
     const handleDelete = (id) => {
-        const updatedSoftwares = softwares.filter((s) => s.id !== id);
+        const updatedSoftwares = softwares.filter((sw) => sw.id !== id);
         setSoftwares(updatedSoftwares);
     };
 
-    const filteredSoftwares = softwares.filter((software) => {
-        const matchesName = software.name
-            .toLowerCase()
-            .includes(searchName.toLowerCase());
-        const matchesStatus = searchStatus
-            ? software.status.toLowerCase() === searchStatus.toLowerCase()
-            : true;
+    const filteredSoftwares = softwares.filter((sw) => {
+        const matchesName = sw.name.toLowerCase().includes(searchName.toLowerCase());
+        const matchesStatus = searchStatus ? sw.status.toLowerCase() === searchStatus.toLowerCase() : true;
         return matchesName && matchesStatus;
     });
 
+    const getLaboratoryName = (labId) => {
+        const lab = laboratories.find((l) => l.id === labId);
+        return lab ? lab.name : "Nenhum";
+    };
+
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Laboratório Software</h1>
-            <p className="text-gray-700 mb-6">Aqui você pode gerenciar os softwares do laboratório.</p>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Software</h1>
+            <p className="text-gray-700 mb-6">Aqui você pode gerenciar os softwares dos laboratórios.</p>
 
             <div className="mb-6 flex gap-4">
                 <div className="flex-1">
@@ -82,27 +84,29 @@ export default function Software() {
                             <th className="border p-3 text-gray-900 font-semibold text-left">ID</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Versão</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Fabricante</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Licença</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Data de Aquisição</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Desenvolvedor</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Data de Instalação</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Laboratório</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Usuário</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredSoftwares.map((software) => (
-                            <tr key={software.id} className="hover:bg-gray-50">
-                                <td className="border p-3 text-gray-700">{software.id}</td>
-                                <td className="border p-3 text-gray-700">{software.name}</td>
-                                <td className="border p-3 text-gray-700">{software.version}</td>
-                                <td className="border p-3 text-gray-700">{software.manufacturer}</td>
-                                <td className="border p-3 text-gray-700">{software.license}</td>
-                                <td className="border p-3 text-gray-700">{software.acquisitionDate}</td>
-                                <td className="border p-3 text-gray-700">{software.status}</td>
+                        {filteredSoftwares.map((sw) => (
+                            <tr key={sw.id} className="hover:bg-gray-50">
+                                <td className="border p-3 text-gray-700">{sw.id}</td>
+                                <td className="border p-3 text-gray-700">{sw.name}</td>
+                                <td className="border p-3 text-gray-700">{sw.version}</td>
+                                <td className="border p-3 text-gray-700">{sw.developer}</td>
+                                <td className="border p-3 text-gray-700">{sw.installationDate}</td>
+                                <td className="border p-3 text-gray-700">{sw.status}</td>
+                                <td className="border p-3 text-gray-700">{getLaboratoryName(sw.laboratoryId)}</td>
+                                <td className="border p-3 text-gray-700">{sw.user || "Nenhum"}</td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleEdit(software.id)}
+                                        onClick={() => handleEdit(sw.id)}
                                         className="text-blue-600 hover:text-blue-800"
                                         title="Editar"
                                     >
@@ -111,7 +115,7 @@ export default function Software() {
                                 </td>
                                 <td className="border p-3 text-gray-700">
                                     <button
-                                        onClick={() => handleDelete(software.id)}
+                                        onClick={() => handleDelete(sw.id)}
                                         className="text-red-600 hover:text-red-800"
                                         title="Excluir"
                                     >

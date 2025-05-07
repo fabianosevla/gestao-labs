@@ -1,39 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMicroHardwares } from "../../../../../lib/storage";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useLaboratories } from "../../../../../lib/storage";
 
-export default function CreateMicroHardware() {
+export default function EditLaboratory() {
     const router = useRouter();
-    const [microHardwares, setMicroHardwares] = useMicroHardwares();
-    const [formData, setFormData] = useState({
-        name: "",
-        type: "",
-        manufacturer: "",
-        serialNumber: "",
-        acquisitionDate: "",
-        status: "ativo",
-    });
+    const { id } = useParams();
+    const [laboratories, setLaboratories] = useLaboratories();
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        const lab = laboratories.find((l) => l.id === parseInt(id));
+        if (lab) {
+            setFormData({ ...lab });
+        } else {
+            router.push("/labs/laboratories");
+        }
+    }, [id, laboratories, router]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const newHardware = {
-            id: microHardwares.length + 1,
-            ...formData,
-        };
-        await setMicroHardwares([...microHardwares, newHardware]);
-        router.push("/labs/hardware/micro");
+        const updatedLaboratories = laboratories.map((l) =>
+            l.id === parseInt(id) ? { ...formData } : l
+        );
+        setLaboratories(updatedLaboratories);
+        router.push("/labs/laboratories");
     };
+
+    if (!formData) return <div>Carregando...</div>;
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Micro Hardware</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Editar Laboratório</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -45,62 +49,49 @@ export default function CreateMicroHardware() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o nome"
+                        placeholder="Digite o nome do laboratório"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="type">
-                        Tipo
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
+                        Localização
                     </label>
                     <input
                         type="text"
-                        id="type"
-                        value={formData.type}
+                        id="location"
+                        value={formData.location}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Processador"
+                        placeholder="Ex.: Prédio B, Sala 203"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="manufacturer">
-                        Fabricante
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="responsible">
+                        Responsável
                     </label>
                     <input
                         type="text"
-                        id="manufacturer"
-                        value={formData.manufacturer}
+                        id="responsible"
+                        value={formData.responsible}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: Intel"
+                        placeholder="Digite o nome do responsável"
                         required
                     />
                 </div>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="serialNumber">
-                        Número Serial
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="capacity">
+                        Capacidade
                     </label>
                     <input
-                        type="text"
-                        id="serialNumber"
-                        value={formData.serialNumber}
+                        type="number"
+                        id="capacity"
+                        value={formData.capacity}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Ex.: ABC123"
-                        required
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="acquisitionDate">
-                        Data de Aquisição
-                    </label>
-                    <input
-                        type="date"
-                        id="acquisitionDate"
-                        value={formData.acquisitionDate}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        placeholder="Digite a capacidade (número de pessoas)"
                         required
                     />
                 </div>
