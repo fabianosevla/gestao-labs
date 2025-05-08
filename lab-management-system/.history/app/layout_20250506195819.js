@@ -1,0 +1,18 @@
+import "./globals.css";
+import Navbar from "./components/navbar";
+
+export const metadata = {
+  title: "Gerenciamento de Laboratórios",
+  description: "Sistema de gerenciamento de laboratórios da Universidade Federal de Itajubá",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR">
+      <body className="bg-gray-100 min-h-screen">
+        <Navbar />
+        <main className="pt-16">{children}</main> {/* Ajuste pt-16 para compensar a altura fixa do navbar */}
+      </body>
+    </html>
+  );
+}
