@@ -25,14 +25,15 @@ export default function EditAdminUser() {
             return;
         }
 
+        // Verifique se adminUsers é um array não vazio antes de prosseguir
         if (adminUsers && Array.isArray(adminUsers) && adminUsers.length > 0) {
-            const adminUser = adminUsers.find((user) => user.id === parseInt(id));
-            console.log("Usuário administrador encontrado:", adminUser);
+            const user = adminUsers.find((u) => u.id === parseInt(id));
+            console.log("Usuário encontrado:", user);
 
-            if (adminUser) {
-                setFormData({ ...adminUser });
+            if (user) {
+                setFormData({ ...user });
             } else {
-                console.log("Usuário administrador não encontrado, redirecionando...");
+                console.log("Usuário não encontrado, redirecionando...");
                 router.push("/labs/users/admin");
             }
         }
@@ -45,33 +46,30 @@ export default function EditAdminUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Atualizando admin:", formData);
+        console.log("Atualizando usuário:", formData);
 
-        const updatedAdmin = {
+        const updatedUser = {
             name: formData.name,
             email: formData.email,
-            username: formData.username,
-            password: formData.password,
-            phone: formData.phone, // Inclui o telefone
             status: formData.status,
         };
 
-        await updateAdminUser(parseInt(id), updatedAdmin);
-        await refreshAdminUsers();
+        await updateAdminUser(parseInt(id), updatedUser);
+        await refreshAdminUsers(); // Recarrega os dados do banco
         router.push("/labs/users/admin");
     };
 
     if (loading) {
-        return <div>Carregando dados...</div>;
+        return <div>Carregando usuários administradores...</div>;
     }
 
     if (!formData) {
-        return <div>Usuário administrador não encontrado.</div>;
+        return <div>Usuário não encontrado.</div>;
     }
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Editar Admin</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Editar Usuário Administrador</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -85,7 +83,7 @@ export default function EditAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o nome"
                         required
-                        autoComplete="off"
+                        autoComplete="name"
                     />
                 </div>
                 <div className="mb-4">
@@ -100,51 +98,7 @@ export default function EditAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o email"
                         required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                        Usuário
-                    </label>
-                    <input
-                        type="text"
-                        id="username"
-                        value={formData?.username || ""}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o usuário"
-                        required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                        Senha
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={formData?.password || ""}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite a senha"
-                        required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-                        Telefone
-                    </label>
-                    <input
-                        type="text"
-                        id="phone"
-                        value={formData?.phone || ""}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o telefone"
-                        autoComplete="off"
+                        autoComplete="email"
                     />
                 </div>
                 <div className="mb-4">
@@ -156,6 +110,8 @@ export default function EditAdminUser() {
                         value={formData?.status || "ativo"}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                        autoComplete="off"
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>

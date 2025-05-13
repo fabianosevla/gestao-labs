@@ -77,7 +77,6 @@ export default function Laboratories() {
                         <tr className="bg-gray-100">
                             <th className="border p-3 text-gray-900 font-semibold text-left">ID</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Prédio/Localização</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Coordenador Geral</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Fone (Coord. Geral)</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Email (Coord. Geral)</th>
@@ -104,7 +103,6 @@ export default function Laboratories() {
                                 <tr key={lab.id.toString()} className="hover:bg-gray-50">
                                     <td className="border p-3 text-gray-700">{lab.id}</td>
                                     <td className="border p-3 text-gray-700">{lab.name}</td>
-                                    <td className="border p-3 text-gray-700">{lab.location || "N/A"}</td>
                                     <td className="border p-3 text-gray-700">{generalCoordinator.name}</td>
                                     <td className="border p-3 text-gray-700">{generalCoordinator.phone}</td>
                                     <td className="border p-3 text-gray-700">{generalCoordinator.email}</td>

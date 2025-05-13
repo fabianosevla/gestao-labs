@@ -1,6 +1,5 @@
 import "./globals.css";
 import Navbar from "../components/Navbar";
-import { AuthProvider } from "../lib/authContext";
 
 export const metadata = {
   title: "Gerenciamento de Laboratórios",
@@ -11,10 +10,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR">
       <body className="bg-gray-100 min-h-screen">
-        <AuthProvider>
-          <Navbar />
-          <main className="pt-16">{children}</main>
-        </AuthProvider>
+        <Navbar />
+        <main className="pt-16">{children}</main>
       </body>
     </html>
   );

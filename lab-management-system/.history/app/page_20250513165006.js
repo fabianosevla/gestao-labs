@@ -17,11 +17,14 @@ export default function Home() {
 
   return (
     <div className="p-6">
+      {/* Conteúdo existente da página inicial */}
       <h1 className="text-4xl font-bold text-gray-900 mb-4">Bem-vindo ao Sistema</h1>
       <p className="text-gray-700 text-lg mb-8">
         Este é o sistema de gerenciamento de laboratórios da Universidade Federal de Itajubá.
       </p>
-      <div className="mt-8 flex space-x-4">
+
+      {/* Botão para abrir o popup */}
+      <div className="mt-8">
         <button
           onClick={openModal}
           className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
@@ -29,17 +32,13 @@ export default function Home() {
           Consulta de Componentes
         </button>
       </div>
+
+      {/* Modal/Popup */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Consulta de Componentes</h2>
             <div className="flex flex-col space-y-3">
-              <button
-                onClick={() => handleNavigation("/labs/laboratories")}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
-              >
-                Listar Laboratórios
-              </button>
               <button
                 onClick={() => handleNavigation("/labs/hardware/micro")}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"

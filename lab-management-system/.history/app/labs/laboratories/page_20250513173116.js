@@ -2,61 +2,51 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMacroHardwares, useLaboratories, useAdminUsers, useVisitorUsers, deleteMacroHardware } from "../../../../lib/storage";
-import { useAuth } from "../../../../lib/authContext";
+import { useLaboratories, useAdminUsers, useVisitorUsers, deleteLaboratory } from "../../../lib/storage";
+import { useAuth } from "../../../lib/authContext";
 
-export default function MacroHardwares() {
+export default function Laboratories() {
     const router = useRouter();
     const { isAuthenticated } = useAuth();
-    const [macroHardwares, setMacroHardwares, loading, refreshMacroHardwares] = useMacroHardwares();
-    const [laboratories] = useLaboratories();
+    const [laboratories, setLaboratories, loading, refreshLaboratories] = useLaboratories();
     const [adminUsers, , adminLoading] = useAdminUsers();
     const [visitorUsers, , visitorLoading] = useVisitorUsers();
     const [searchName, setSearchName] = useState("");
-    const [searchStatus, setSearchStatus] = useState("");
 
     const handleCreate = () => {
-        router.push("/labs/hardware/macro/create");
+        router.push("/labs/laboratories/create");
     };
 
     const handleEdit = (id) => {
-        router.push(`/labs/hardware/macro/edit/${id}`);
+        router.push(`/labs/laboratories/edit/${id}`);
     };
 
     const handleDelete = async (id) => {
-        await deleteMacroHardware(id);
-        await refreshMacroHardwares();
+        await deleteLaboratory(id);
+        await refreshLaboratories();
     };
 
-    const filteredMacroHardwares = macroHardwares.filter((hw) => {
-        const matchesName = hw.name.toLowerCase().includes(searchName.toLowerCase());
-        const matchesStatus = searchStatus ? hw.status.toLowerCase() === searchStatus.toLowerCase() : true;
-        return matchesName && matchesStatus;
-    });
-
-    const getLaboratoryName = (labId) => {
-        const lab = laboratories.find((l) => l.id === labId);
-        return lab ? lab.name : "Nenhum";
-    };
+    const filteredLaboratories = laboratories.filter((lab) =>
+        lab.name.toLowerCase().includes(searchName.toLowerCase())
+    );
 
     const getUserName = (userId) => {
+        console.log("Verificando userId:", userId); // Depuração
         if (!userId && userId !== 0) return "Ninguém";
-        const fullUserId = userId.toString().startsWith("admin-") ? userId : userId.toString().startsWith("visitor-") ? userId : `admin-${userId}`;
-        const [type, id] = fullUserId.split("-");
-        const user = type === "admin" ? adminUsers.find((u) => u.id === parseInt(id)) : visitorUsers.find((u) => u.id === parseInt(id));
+        const user = adminUsers.find((u) => u.id === parseInt(userId)) || visitorUsers.find((u) => u.id === parseInt(userId));
         return user ? user.name : "Desconhecido";
     };
 
     if (loading || adminLoading || visitorLoading) {
-        return <div>Carregando hardwares macro...</div>;
+        return <div>Carregando laboratórios...</div>;
     }
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Hardware Macro</h1>
-            <p className="text-gray-700 mb-6">Gerencie os hardwares macro do laboratório.</p>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Laboratórios</h1>
+            <p className="text-gray-700 mb-6">Gerencie os laboratórios.</p>
 
-            <div className="mb-6 flex gap-4">
+            <div className="mb-6">
                 <div className="flex-1">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="searchName">
                         Pesquisar por Nome
@@ -70,22 +60,6 @@ export default function MacroHardwares() {
                         placeholder="Digite o nome para buscar"
                         autoComplete="off"
                     />
-                </div>
-                <div className="flex-1">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="searchStatus">
-                        Pesquisar por Status
-                    </label>
-                    <select
-                        id="searchStatus"
-                        value={searchStatus}
-                        onChange={(e) => setSearchStatus(e.target.value)}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        autoComplete="off"
-                    >
-                        <option value="">Todos</option>
-                        <option value="ativo">Ativo</option>
-                        <option value="inativo">Inativo</option>
-                    </select>
                 </div>
             </div>
 
@@ -103,9 +77,7 @@ export default function MacroHardwares() {
                         <tr className="bg-gray-100">
                             <th className="border p-3 text-gray-900 font-semibold text-left">ID</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Laboratório</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Usuário Utilizador</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Usuário Responsável</th>
                             {isAuthenticated && (
                                 <>
                                     <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
@@ -115,18 +87,16 @@ export default function MacroHardwares() {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredMacroHardwares.map((hw) => (
-                            <tr key={hw.id.toString()} className="hover:bg-gray-50">
-                                <td className="border p-3 text-gray-700">{hw.id}</td>
-                                <td className="border p-3 text-gray-700">{hw.name}</td>
-                                <td className="border p-3 text-gray-700">{getLaboratoryName(hw.laboratoryId)}</td>
-                                <td className="border p-3 text-gray-700">{getUserName(hw.userId)}</td>
-                                <td className="border p-3 text-gray-700">{hw.status}</td>
+                        {filteredLaboratories.map((lab) => (
+                            <tr key={lab.id.toString()} className="hover:bg-gray-50">
+                                <td className="border p-3 text-gray-700">{lab.id}</td>
+                                <td className="border p-3 text-gray-700">{lab.name}</td>
+                                <td className="border p-3 text-gray-700">{getUserName(lab.userId)}</td>
                                 {isAuthenticated && (
                                     <>
                                         <td className="border p-3 text-gray-700">
                                             <button
-                                                onClick={() => handleEdit(hw.id)}
+                                                onClick={() => handleEdit(lab.id)}
                                                 className="text-blue-600 hover:text-blue-800"
                                                 title="Editar"
                                             >
@@ -135,7 +105,7 @@ export default function MacroHardwares() {
                                         </td>
                                         <td className="border p-3 text-gray-700">
                                             <button
-                                                onClick={() => handleDelete(hw.id)}
+                                                onClick={() => handleDelete(lab.id)}
                                                 className="text-red-600 hover:text-red-800"
                                                 title="Excluir"
                                             >

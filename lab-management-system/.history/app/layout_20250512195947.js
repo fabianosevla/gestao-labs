@@ -1,6 +1,6 @@
 import "./globals.css";
 import Navbar from "../components/Navbar";
-import { AuthProvider } from "../lib/authContext";
+import { AuthProvider } from "./auth/AuthContext";
 
 export const metadata = {
   title: "Gerenciamento de Laboratórios",

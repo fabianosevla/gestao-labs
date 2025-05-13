@@ -2,13 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMacroHardwares, useLaboratories, useAdminUsers, useVisitorUsers, deleteMacroHardware } from "../../../../lib/storage";
-import { useAuth } from "../../../../lib/authContext";
+import { useMicroHardwares, useLaboratories, useAdminUsers, useVisitorUsers, deleteMicroHardware } from "../../../../lib/storage";
 
-export default function MacroHardwares() {
+export default function MicroHardwares() {
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
-    const [macroHardwares, setMacroHardwares, loading, refreshMacroHardwares] = useMacroHardwares();
+    const [microHardwares, setMicroHardwares, loading, refreshMicroHardwares] = useMicroHardwares();
     const [laboratories] = useLaboratories();
     const [adminUsers, , adminLoading] = useAdminUsers();
     const [visitorUsers, , visitorLoading] = useVisitorUsers();
@@ -16,19 +14,19 @@ export default function MacroHardwares() {
     const [searchStatus, setSearchStatus] = useState("");
 
     const handleCreate = () => {
-        router.push("/labs/hardware/macro/create");
+        router.push("/labs/hardware/micro/create");
     };
 
     const handleEdit = (id) => {
-        router.push(`/labs/hardware/macro/edit/${id}`);
+        router.push(`/labs/hardware/micro/edit/${id}`);
     };
 
     const handleDelete = async (id) => {
-        await deleteMacroHardware(id);
-        await refreshMacroHardwares();
+        await deleteMicroHardware(id);
+        await refreshMicroHardwares();
     };
 
-    const filteredMacroHardwares = macroHardwares.filter((hw) => {
+    const filteredMicroHardwares = microHardwares.filter((hw) => {
         const matchesName = hw.name.toLowerCase().includes(searchName.toLowerCase());
         const matchesStatus = searchStatus ? hw.status.toLowerCase() === searchStatus.toLowerCase() : true;
         return matchesName && matchesStatus;
@@ -41,20 +39,18 @@ export default function MacroHardwares() {
 
     const getUserName = (userId) => {
         if (!userId && userId !== 0) return "Ninguém";
-        const fullUserId = userId.toString().startsWith("admin-") ? userId : userId.toString().startsWith("visitor-") ? userId : `admin-${userId}`;
-        const [type, id] = fullUserId.split("-");
-        const user = type === "admin" ? adminUsers.find((u) => u.id === parseInt(id)) : visitorUsers.find((u) => u.id === parseInt(id));
+        const user = adminUsers.find((u) => u.id === parseInt(userId)) || visitorUsers.find((u) => u.id === parseInt(userId));
         return user ? user.name : "Desconhecido";
     };
 
     if (loading || adminLoading || visitorLoading) {
-        return <div>Carregando hardwares macro...</div>;
+        return <div>Carregando hardwares micro...</div>;
     }
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Hardware Macro</h1>
-            <p className="text-gray-700 mb-6">Gerencie os hardwares macro do laboratório.</p>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Hardware Micro</h1>
+            <p className="text-gray-700 mb-6">Gerencie os hardwares micro do laboratório.</p>
 
             <div className="mb-6 flex gap-4">
                 <div className="flex-1">
@@ -89,14 +85,12 @@ export default function MacroHardwares() {
                 </div>
             </div>
 
-            {isAuthenticated && (
-                <button
-                    onClick={handleCreate}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 text-left mb-6"
-                >
-                    Criar
-                </button>
-            )}
+            <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 text-left mb-6"
+            >
+                Criar
+            </button>
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse bg-white shadow-md rounded-lg">
                     <thead>
@@ -106,44 +100,36 @@ export default function MacroHardwares() {
                             <th className="border p-3 text-gray-900 font-semibold text-left">Laboratório</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Usuário Utilizador</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
-                            {isAuthenticated && (
-                                <>
-                                    <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
-                                    <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
-                                </>
-                            )}
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredMacroHardwares.map((hw) => (
+                        {filteredMicroHardwares.map((hw) => (
                             <tr key={hw.id.toString()} className="hover:bg-gray-50">
                                 <td className="border p-3 text-gray-700">{hw.id}</td>
                                 <td className="border p-3 text-gray-700">{hw.name}</td>
                                 <td className="border p-3 text-gray-700">{getLaboratoryName(hw.laboratoryId)}</td>
                                 <td className="border p-3 text-gray-700">{getUserName(hw.userId)}</td>
                                 <td className="border p-3 text-gray-700">{hw.status}</td>
-                                {isAuthenticated && (
-                                    <>
-                                        <td className="border p-3 text-gray-700">
-                                            <button
-                                                onClick={() => handleEdit(hw.id)}
-                                                className="text-blue-600 hover:text-blue-800"
-                                                title="Editar"
-                                            >
-                                                ✏️
-                                            </button>
-                                        </td>
-                                        <td className="border p-3 text-gray-700">
-                                            <button
-                                                onClick={() => handleDelete(hw.id)}
-                                                className="text-red-600 hover:text-red-800"
-                                                title="Excluir"
-                                            >
-                                                ❌
-                                            </button>
-                                        </td>
-                                    </>
-                                )}
+                                <td className="border p-3 text-gray-700">
+                                    <button
+                                        onClick={() => handleEdit(hw.id)}
+                                        className="text-blue-600 hover:text-blue-800"
+                                        title="Editar"
+                                    >
+                                        ✏️
+                                    </button>
+                                </td>
+                                <td className="border p-3 text-gray-700">
+                                    <button
+                                        onClick={() => handleDelete(hw.id)}
+                                        className="text-red-600 hover:text-red-800"
+                                        title="Excluir"
+                                    >
+                                        ❌
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

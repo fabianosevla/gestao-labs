@@ -30,16 +30,10 @@ export default function Home() {
         </button>
       </div>
       {isModalOpen && (
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Consulta de Componentes</h2>
             <div className="flex flex-col space-y-3">
-              <button
-                onClick={() => handleNavigation("/labs/laboratories")}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"
-              >
-                Listar Laboratórios
-              </button>
               <button
                 onClick={() => handleNavigation("/labs/hardware/micro")}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300"

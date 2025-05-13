@@ -1,20 +1,42 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAdminUsers, addAdminUser } from "../../../../../lib/storage";
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useAdminUsers, updateAdminUser } from "../../../../../../lib/storage";
 
-export default function CreateAdminUser() {
+export default function EditAdminUser() {
     const router = useRouter();
+    const { id } = useParams();
     const [adminUsers, setAdminUsers, loading, refreshAdminUsers] = useAdminUsers();
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        username: "",
-        password: "",
-        phone: "", // Novo campo Telefone
-        status: "ativo",
-    });
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        if (loading) {
+            console.log("Aguardando carregamento dos usuários administradores...");
+            return;
+        }
+
+        console.log("ID recebido:", id);
+        console.log("Usuários administradores disponíveis:", adminUsers);
+
+        if (!id || isNaN(parseInt(id))) {
+            console.log("ID inválido, redirecionando...");
+            router.push("/labs/users/admin");
+            return;
+        }
+
+        if (adminUsers && Array.isArray(adminUsers) && adminUsers.length > 0) {
+            const user = adminUsers.find((u) => u.id === parseInt(id));
+            console.log("Usuário encontrado:", user);
+
+            if (user) {
+                setFormData({ ...user });
+            } else {
+                console.log("Usuário não encontrado, redirecionando...");
+                router.push("/labs/users/admin");
+            }
+        }
+    }, [id, adminUsers, loading, router]);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -23,29 +45,32 @@ export default function CreateAdminUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Salvando novo admin:", formData);
+        console.log("Atualizando usuário:", formData);
 
-        const newAdmin = {
+        const updatedUser = {
             name: formData.name,
             email: formData.email,
             username: formData.username,
-            password: formData.password,
-            phone: formData.phone, // Inclui o telefone
+            password: formData.password || formData.password, // Mantém a senha atual se não alterada
             status: formData.status,
         };
 
-        await addAdminUser(newAdmin);
+        await updateAdminUser(parseInt(id), updatedUser);
         await refreshAdminUsers();
         router.push("/labs/users/admin");
     };
 
     if (loading) {
-        return <div>Carregando dados...</div>;
+        return <div>Carregando usuários administradores...</div>;
+    }
+
+    if (!formData) {
+        return <div>Usuário não encontrado.</div>;
     }
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Admin</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Editar Usuário Administrador</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -54,12 +79,12 @@ export default function CreateAdminUser() {
                     <input
                         type="text"
                         id="name"
-                        value={formData.name}
+                        value={formData?.name || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o nome"
                         required
-                        autoComplete="off"
+                        autoComplete="name"
                     />
                 </div>
                 <div className="mb-4">
@@ -69,12 +94,12 @@ export default function CreateAdminUser() {
                     <input
                         type="email"
                         id="email"
-                        value={formData.email}
+                        value={formData?.email || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o email"
                         required
-                        autoComplete="off"
+                        autoComplete="email"
                     />
                 </div>
                 <div className="mb-4">
@@ -84,41 +109,26 @@ export default function CreateAdminUser() {
                     <input
                         type="text"
                         id="username"
-                        value={formData.username}
+                        value={formData?.username || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o usuário"
                         required
-                        autoComplete="off"
+                        autoComplete="username"
                     />
                 </div>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                        Senha
+                        Senha (deixe em branco para manter a atual)
                     </label>
                     <input
                         type="password"
                         id="password"
-                        value={formData.password}
+                        value={formData?.password || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite a senha"
-                        required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-                        Telefone
-                    </label>
-                    <input
-                        type="text"
-                        id="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o telefone"
-                        autoComplete="off"
+                        placeholder="Digite a nova senha (opcional)"
+                        autoComplete="new-password"
                     />
                 </div>
                 <div className="mb-4">
@@ -127,9 +137,11 @@ export default function CreateAdminUser() {
                     </label>
                     <select
                         id="status"
-                        value={formData.status}
+                        value={formData?.status || "ativo"}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                        autoComplete="off"
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>

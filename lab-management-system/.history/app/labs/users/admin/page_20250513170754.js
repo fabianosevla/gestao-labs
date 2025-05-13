@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminUsers, deleteAdminUser } from "../../../../lib/storage";
-import { useAuth } from "../../../../lib/authContext";
 
 export default function AdminUsers() {
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
     const [adminUsers, setAdminUsers, loading, refreshAdminUsers] = useAdminUsers();
     const [searchName, setSearchName] = useState("");
     const [searchStatus, setSearchStatus] = useState("");
@@ -77,14 +75,12 @@ export default function AdminUsers() {
                 </div>
             </div>
 
-            {isAuthenticated && (
-                <button
-                    onClick={handleCreate}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 text-left mb-6"
-                >
-                    Criar
-                </button>
-            )}
+            <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 text-left mb-6"
+            >
+                Criar
+            </button>
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse bg-white shadow-md rounded-lg">
                     <thead>
@@ -93,14 +89,9 @@ export default function AdminUsers() {
                             <th className="border p-3 text-gray-900 font-semibold text-left">Nome</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Email</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Usuário</th>
-                            <th className="border p-3 text-gray-900 font-semibold text-left">Telefone</th>
                             <th className="border p-3 text-gray-900 font-semibold text-left">Status</th>
-                            {isAuthenticated && (
-                                <>
-                                    <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
-                                    <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
-                                </>
-                            )}
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Editar</th>
+                            <th className="border p-3 text-gray-900 font-semibold text-left">Excluir</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,30 +101,25 @@ export default function AdminUsers() {
                                 <td className="border p-3 text-gray-700">{user.name}</td>
                                 <td className="border p-3 text-gray-700">{user.email}</td>
                                 <td className="border p-3 text-gray-700">{user.username}</td>
-                                <td className="border p-3 text-gray-700">{user.phone || "N/A"}</td>
                                 <td className="border p-3 text-gray-700">{user.status}</td>
-                                {isAuthenticated && (
-                                    <>
-                                        <td className="border p-3 text-gray-700">
-                                            <button
-                                                onClick={() => handleEdit(user.id)}
-                                                className="text-blue-600 hover:text-blue-800"
-                                                title="Editar"
-                                            >
-                                                ✏️
-                                            </button>
-                                        </td>
-                                        <td className="border p-3 text-gray-700">
-                                            <button
-                                                onClick={() => handleDelete(user.id)}
-                                                className="text-red-600 hover:text-red-800"
-                                                title="Excluir"
-                                            >
-                                                ❌
-                                            </button>
-                                        </td>
-                                    </>
-                                )}
+                                <td className="border p-3 text-gray-700">
+                                    <button
+                                        onClick={() => handleEdit(user.id)}
+                                        className="text-blue-600 hover:text-blue-800"
+                                        title="Editar"
+                                    >
+                                        ✏️
+                                    </button>
+                                </td>
+                                <td className="border p-3 text-gray-700">
+                                    <button
+                                        onClick={() => handleDelete(user.id)}
+                                        className="text-red-600 hover:text-red-800"
+                                        title="Excluir"
+                                    >
+                                        ❌
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

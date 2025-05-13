@@ -12,7 +12,6 @@ export default function CreateAdminUser() {
         email: "",
         username: "",
         password: "",
-        phone: "", // Novo campo Telefone
         status: "ativo",
     });
 
@@ -23,29 +22,28 @@ export default function CreateAdminUser() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Salvando novo admin:", formData);
+        console.log("Salvando novo usuário:", formData);
 
-        const newAdmin = {
+        const newUser = {
             name: formData.name,
             email: formData.email,
             username: formData.username,
-            password: formData.password,
-            phone: formData.phone, // Inclui o telefone
+            password: formData.password, // Armazenado como texto simples (recomenda-se hash no backend)
             status: formData.status,
         };
 
-        await addAdminUser(newAdmin);
+        await addAdminUser(newUser);
         await refreshAdminUsers();
         router.push("/labs/users/admin");
     };
 
     if (loading) {
-        return <div>Carregando dados...</div>;
+        return <div>Carregando...</div>;
     }
 
     return (
         <div className="p-6 pt-28">
-            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Admin</h1>
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Criar Novo Usuário Administrador</h1>
             <form className="max-w-lg" onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
@@ -59,7 +57,7 @@ export default function CreateAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o nome"
                         required
-                        autoComplete="off"
+                        autoComplete="name"
                     />
                 </div>
                 <div className="mb-4">
@@ -74,7 +72,7 @@ export default function CreateAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o email"
                         required
-                        autoComplete="off"
+                        autoComplete="email"
                     />
                 </div>
                 <div className="mb-4">
@@ -89,7 +87,7 @@ export default function CreateAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o usuário"
                         required
-                        autoComplete="off"
+                        autoComplete="username"
                     />
                 </div>
                 <div className="mb-4">
@@ -104,21 +102,7 @@ export default function CreateAdminUser() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite a senha"
                         required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phone">
-                        Telefone
-                    </label>
-                    <input
-                        type="text"
-                        id="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o telefone"
-                        autoComplete="off"
+                        autoComplete="new-password"
                     />
                 </div>
                 <div className="mb-4">
@@ -130,6 +114,8 @@ export default function CreateAdminUser() {
                         value={formData.status}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        required
+                        autoComplete="off"
                     >
                         <option value="ativo">Ativo</option>
                         <option value="inativo">Inativo</option>

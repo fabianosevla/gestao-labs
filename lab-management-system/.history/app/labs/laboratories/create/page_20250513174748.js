@@ -10,7 +10,6 @@ export default function CreateLaboratory() {
     const [adminUsers, , adminLoading] = useAdminUsers();
     const [formData, setFormData] = useState({
         name: "",
-        location: "", // Novo campo Prédio/Localização
         generalCoordinatorId: "",
         labCoordinatorId: "",
         technicianId: "",
@@ -49,7 +48,6 @@ export default function CreateLaboratory() {
 
         const newLaboratory = {
             name: formData.name,
-            location: formData.location, // Inclui o novo campo
             generalCoordinatorId: formData.generalCoordinatorId ? parseInt(formData.generalCoordinatorId) : null,
             labCoordinatorId: formData.labCoordinatorId ? parseInt(formData.labCoordinatorId) : null,
             technicianId: formData.technicianId ? parseInt(formData.technicianId) : null,
@@ -85,20 +83,6 @@ export default function CreateLaboratory() {
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         placeholder="Digite o nome do laboratório"
                         required
-                        autoComplete="off"
-                    />
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="location">
-                        Prédio/Localização
-                    </label>
-                    <input
-                        type="text"
-                        id="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        placeholder="Digite o prédio ou localização"
                         autoComplete="off"
                     />
                 </div>
